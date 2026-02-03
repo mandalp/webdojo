@@ -52,53 +52,6 @@ This repository includes practical examples of:
 
 ---
 
-## 📁 Project Structure
-
-```text
-api/
-├── prisma/
-│   ├── migrations/
-│   └── schema.prisma
-├── index.js
-├── .env
-└── package.json
-
-cypress/
-├── docs/
-│   └── bdd/
-│       ├── cep-search.feature
-│       ├── consultancy.feature
-│       └── github-profiles.feature
-│
-├── e2e/
-│   ├── get.cy.js
-│   ├── post.cy.js
-│   ├── put.cy.js
-│   └── delete.cy.js
-│
-├── fixtures/
-│   ├── cep.json
-│   ├── consultancy.json
-│   ├── githubProfiles.json
-│   ├── users.json
-│   └── document.pdf
-│
-├── pages/
-│   └── Page Objects
-│
-├── support/
-│   ├── actions/
-│   │   ├── consultancy.actions.js
-│   │   ├── github.actions.js
-│   │   └── user.actions.js
-│   ├── commands.js
-│   ├── database.js
-│   ├── e2e.js
-│   └── utils.js
-```
-
----
-
 ## ▶️ Running the WebDojo Application
 
 The WebDojo application is located in the **same repository**.
