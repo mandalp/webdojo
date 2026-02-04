@@ -3,9 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "vite build",      
-    "start:ci": "serve -s dist -l 3000",
-    "dev": "vite",
+    "build": "react-scripts build",
+    "start:ci": "serve -s build -l 3000",
     "test": "npx cypress run --config viewportWidth=1440,viewportHeight=900",
     "open": "npx cypress open",
     "cy:chrome": "npx cypress run --browser chrome",
