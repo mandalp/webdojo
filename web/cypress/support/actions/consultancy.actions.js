@@ -84,3 +84,8 @@ Cypress.Commands.add('modalMessageShouldBeVisible', (message) => {
     .should('contain.text', message)
 })
 
+Cypress.Commands.add('modalMessageShouldNotBeVisible', (message) => {
+  cy.get('.modal', { timeout: 7000 })
+    .should('not.exist')
+})
+

@@ -1,8 +1,6 @@
-import {personal, company} from '../fixtures/consultancy.json'
+import { personal, company } from '../fixtures/consultancy.json'
 
 describe('consulting form', () => {
-    // Enviar formulario de consultoria com documento invalido
-    // enviar formulario sem aceitar termos de uso
     beforeEach(() => {
         // Arrange
         cy.login()
@@ -21,7 +19,7 @@ describe('consulting form', () => {
     it('should request company consultation', () => {
         // Act
         cy.fillConsultancyForm(company)
-         cy.submitForm('button', 'Enviar formulário')
+        cy.submitForm('button', 'Enviar formulário')
 
         // Assert
         cy.modalMessageShouldBeVisible('com sucesso!')
@@ -29,7 +27,7 @@ describe('consulting form', () => {
 
     it('should verify required fields validation', () => {
         // Act
-         cy.submitForm('button', 'Enviar formulário')
+        cy.submitForm('button', 'Enviar formulário')
 
         // Assert
         const requiredFields = [
@@ -41,4 +39,42 @@ describe('consulting form', () => {
             cy.shouldShowFieldError(field, message)
         })
     })
+
+    it('should not submit the form without accepting terms of use', () => {
+        // Act
+        const dataWithoutTerms = {
+            ...personal,
+            terms: false
+        }
+        cy.fillConsultancyForm(dataWithoutTerms)
+        cy.submitForm('button', 'Enviar formulário')
+
+        // Assert
+        cy.shouldShowFieldError(
+            'termos de uso *',
+            'Você precisa aceitar os termos de uso'
+        )
+        cy.modalMessageShouldNotBeVisible('com sucesso!')
+    })
+
+    it('should not submit the form with invalid email', () => {
+        // Arrange
+        const invalidEmailData = {
+            ...personal,
+            email: 'email-invalido'
+        }
+
+        // Act
+        cy.fillConsultancyForm(invalidEmailData)
+        cy.submitForm('button', 'Enviar formulário')
+
+        // Assert
+        cy.get('input[placeholder="Digite seu email"]')
+            .then($input => {
+                expect($input[0].checkValidity()).to.be.false
+                expect($input[0].validationMessage)
+                    .to.contain('@')
+            })
+    })
+
 })

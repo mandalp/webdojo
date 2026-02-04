@@ -1,52 +1,67 @@
-Feature: GitHub Profiles Management
+Feature: GitHub profile management
 
-  As a system user
+  As a user
   I want to manage GitHub profiles
-  So that I can keep a list of profiles up to date
+  So that I can organize and access repository owners easily
 
+  Background:
+    Given I am logged into the system
+    And I am on the "Perfis do GitHub" page
 
-  Scenario: Create a GitHub profile
-    Given I am authenticated in the system
-    And I access the GitHub profiles page
-    When I fill in the profile form with valid data
-    And I submit the form
-    Then the profile should be displayed in the profiles table
+  # =========================
+  # Profile creation
+  # =========================
 
+  Scenario: Add GitHub profiles successfully
+    When I add a new GitHub profile with valid data
+    Then the profile should be displayed in the table
 
-  Scenario: Create multiple GitHub profiles
-    Given I am authenticated in the system
-    And I access the GitHub profiles page
-    When I create multiple GitHub profiles with valid data
-    Then all created profiles should be displayed in the profiles table
-
+  # =========================
+  # Profile removal
+  # =========================
 
   Scenario: Remove a GitHub profile
-    Given a GitHub profile exists in the system
-    And I access the GitHub profiles page
-    When I remove the profile
-    Then the profile should no longer be displayed in the profiles table
+    Given a GitHub profile is already added
+    When I remove the GitHub profile
+    Then the profile should no longer be displayed in the table
 
+  # =========================
+  # Profile access
+  # =========================
 
-  Scenario: Submit the GitHub profile form with missing required fields
-    Given I am authenticated in the system
-    And I access the GitHub profiles page
-    When I try to submit the profile form without filling in the required fields
-    Then I should see validation messages indicating the required fields
-    
+  Scenario: Open GitHub profile in a new tab
+    Given a GitHub profile is already added
+    When I click to open the GitHub profile
+    Then the profile should be opened in a new browser tab
 
-  Scenario: Open a GitHub profile in a new tab
-    Given a GitHub profile exists in the system
-    And I access the GitHub profiles page
-    When I open the profile in a new tab
-    Then the GitHub profile page should be displayed in the new tab
+  # =========================
+  # Required fields validation
+  # =========================
 
-  Scenario: Search for a GitHub profile
-    Given multiple GitHub profiles exist in the system
-    And I access the GitHub profiles page
-    When I search for a specific GitHub profile by username
-    Then only the matching profile should be displayed in the profiles table
+  Scenario Outline: Validate required fields when creating a GitHub profile
+    When I try to add a GitHub profile with missing required information
+    Then I should see a required field error message
 
+    Examples:
+      | scenario           |
+      | without name       |
+      | without username   |
+      | without profile    |
 
+  # =========================
+  # Profile search
+  # =========================
 
+  Scenario: Search GitHub profile by username
+    Given a GitHub profile is already added
+    When I search for the profile by username
+    Then the matching GitHub profile should be displayed in the table
 
+  Scenario: Search GitHub profile by name
+    Given a GitHub profile is already added
+    When I search for the profile by name
+    Then the matching GitHub profile should be displayed in the table
 
+  Scenario: Search for a non existing GitHub profile
+    When I search for a profile that does not exist
+    Then I should see an empty state message indicating no profiles were found

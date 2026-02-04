@@ -24,6 +24,4 @@ describe('Login Test', () => {
         .should('be.visible')
     })
   })
-
-
 })

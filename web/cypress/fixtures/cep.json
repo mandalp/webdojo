@@ -1,7 +1,23 @@
 {
-  "cep": "38706167",
-  "street": "",
-  "neighborhood": "Jardim Céu Azul",
-  "city": "Patos de Minas",
-  "state": "MG"
+  "valid": {
+    "cep": "38706167",
+    "street": "",
+    "neighborhood": "Jardim Céu Azul",
+    "city": "Patos de Minas",
+    "state": "MG"
+  },
+  "invalid": {
+    "cep": "99999999",
+    "street": "",
+    "neighborhood": "",
+    "city": "",
+    "state": ""
+  },
+  "nonexistent": {
+    "cep": "123",
+    "street": "",
+    "neighborhood": "",
+    "city": "",
+    "state": ""
+  }
 }

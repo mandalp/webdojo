@@ -49,16 +49,6 @@ Cypress.Commands.add('goTo', (buttonName, pageTitle) => {
         .should('be.visible')
 })
 
-Cypress.Commands.add('goToSignup', (linkName, pageTitle) => {
-    cy.start()
-    cy.get(linkName)
-        .should('be.visible')
-        .click()
-
-    cy.contains('h2', pageTitle)
-        .should('be.visible')
-})
-
 Cypress.Commands.add('shouldShowFieldError', (field, message) => {
   cy.contains('label', field)
     .parent()

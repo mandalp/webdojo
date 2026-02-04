@@ -2,20 +2,20 @@ Cypress.Commands.add('fillGithubForm', (data) => {
   if (data.name) {
     cy.get('#name').type(data.name)
   }
-    if (data.username) {
+  if (data.username) {
     cy.get('#username').type(data.username)
   }
-    if (data.profile) {
+  if (data.profile) {
     cy.get('#profile').type(data.profile)
   }
 })
 
 Cypress.Commands.add('validateGithubProfileInTable', (username, name, profile) => {
   cy.getGithubProfileRow(username).within(() => {
-      cy.contains(name).should('be.visible')
-      cy.contains(username).should('be.visible')
-      cy.contains(profile).should('be.visible')
-    })
+    cy.contains(name).should('be.visible')
+    cy.contains(username).should('be.visible')
+    cy.contains(profile).should('be.visible')
+  })
 })
 
 Cypress.Commands.add('removeGithubProfileFromTable', (username) => {
@@ -36,5 +36,13 @@ Cypress.Commands.add('getGithubProfileRow', (username) => {
     .contains('table tbody td', username)
     .should('exist')
     .closest('tr')
+})
+
+Cypress.Commands.add('searchNameOrUsername', (value) => {
+  const searchInput = 'input[placeholder="Buscar por nome ou username..."]'
+
+  cy.get(searchInput)
+    .clear()
+    .type(value)
 })
 

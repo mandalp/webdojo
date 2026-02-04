@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "serve -s dist -p 3000",
-    "test": "npx cypress run --config viewportWidth=1440,viewportHeight=900", 
+    "test": "npx cypress run --config viewportWidth=1440,viewportHeight=900",
     "open": "npx cypress open",
     "cy:chrome": "npx cypress run --browser chrome",
     "test:login:mobile": "npx cypress run --spec cypress/e2e/login.cy.js --config viewportWidth=414,viewportHeight=896"
@@ -15,6 +15,7 @@
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
   "devDependencies": {
+    "@faker-js/faker": "^10.2.0",
     "cypress": "^14.5.4"
   }
 }

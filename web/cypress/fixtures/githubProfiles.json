@@ -1,24 +1,65 @@
 {
-  "profiles": [
+  "valid": {
+    "profiles": [
+      {
+        "name": "My Profile",
+        "username": "myprofile",
+        "profile": "Developer"
+      },
+      {
+        "name": "Quality Analyst",
+        "username": "qa.user",
+        "profile": "QA"
+      },
+      {
+        "name": "Product Owner",
+        "username": "product.owner",
+        "profile": "PO"
+      },
+      {
+        "name": "Tech Lead",
+        "username": "tech.lead",
+        "profile": "Tech Lead"
+      }
+    ]
+  },
+
+ "requiredFields": [
     {
-      "name": "My Profile",
-      "username": "myprofile",
-      "profile": "Developer"
+      "scenario": "without name",
+      "data": {
+        "name": "",
+        "username": "qa.user",
+        "profile": "QA"
+      },
+      "expectedError": {
+        "field": "Nome",
+        "message": "Nome é obrigatório"
+      }
     },
     {
-      "name": "Quality Analyst",
-      "username": "qa.user",
-      "profile": "QA"
+      "scenario": "without username",
+      "data": {
+        "name": "Quality Analyst",
+        "username": "",
+        "profile": "QA"
+      },
+      "expectedError": {
+        "field": "Username",
+        "message": "Username é obrigatório"
+      }
     },
     {
-      "name": "Product Owner",
-      "username": "product.owner",
-      "profile": "PO"
-    },
-    {
-      "name": "Tech Lead",
-      "username": "tech.lead",
-      "profile": "Tech Lead"
+      "scenario": "without profile",
+      "data": {
+        "name": "Quality Analyst",
+        "username": "qa.user",
+        "profile": ""
+      },
+      "expectedError": {
+        "field": "Perfil",
+        "message": "Perfil é obrigatório"
+      }
     }
   ]
 }
