@@ -22,48 +22,57 @@ jobs:
     # Runs tests in parallel with matrix strategy https://docs.cypress.io/guides/guides/parallelization
     # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
     # Also see warning here https://github.com/cypress-io/github-action#parallel
-    strategy:
-      fail-fast: false # https://github.com/cypress-io/github-action/issues/48
-      matrix:
-        containers: [1, 2] # Uses 2 parallel instances
+    #strategy:
+    #  fail-fast: false # https://github.com/cypress-io/github-action/issues/48
+    #  matrix:
+    #    containers: [1, 2] # Uses 2 parallel instances
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      # ======================
+      # API
+      # ======================
+      - name: Install API dependencies
+        working-directory: api
         run: npm install
 
-      # -----------------------
-      # Start API
-      # -----------------------
       - name: Start API
+        working-directory: api
         run: |
+          echo "Starting API..."
           npm run dev &
-        env:
-          PORT: 3333
+          sleep 5
 
-      # -----------------------
-      # Build and start Web
-      # -----------------------
-      - name: Build Web
-        run: npm run build || true
+      # ======================
+      # WEB
+      # ======================
+      - name: Install Web dependencies
+        working-directory: web
+        run: npm install
 
       - name: Start Web
+        working-directory: web
         run: |
+          echo "Starting Web..."
           npm run dev &
-        env:
-          PORT: 3000
+          sleep 5
 
-      # -----------------------
+      # ======================
       # Wait for services
-      # -----------------------
+      # ======================
       - name: Wait for API and Web
         run: |
-          npx wait-on http://localhost:3333 http://localhost:3000
+          npx wait-on \
+            http://localhost:3333 \
+            http://localhost:3000 \
+            --timeout 60000 \
+            --interval 2000 \
+            --log
 
-      # -----------------------
-      # Run Cypress
-      # -----------------------
+      # ======================
+      # Cypress
+      # ======================
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
         with:
