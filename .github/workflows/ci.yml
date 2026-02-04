@@ -1,5 +1,4 @@
 # .github/workflows/ci.yml
-
 name: ci
 
 on:
@@ -19,6 +18,7 @@ jobs:
     container: 
       image: cypress/browsers:22.16.0
       options: --user 1001
+
     # Runs tests in parallel with matrix strategy https://docs.cypress.io/guides/guides/parallelization
     # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
     # Also see warning here https://github.com/cypress-io/github-action#parallel
@@ -27,26 +27,50 @@ jobs:
       matrix:
         containers: [1, 2] # Uses 2 parallel instances
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Cypress e2e tests
-        # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
+
+      - name: Install dependencies
+        run: npm install
+
+      # -----------------------
+      # Start API
+      # -----------------------
+      - name: Start API
+        run: |
+          npm run dev &
+        env:
+          PORT: 3333
+
+      # -----------------------
+      # Build and start Web
+      # -----------------------
+      - name: Build Web
+        run: npm run build || true
+
+      - name: Start Web
+        run: |
+          npm run dev &
+        env:
+          PORT: 3000
+
+      # -----------------------
+      # Wait for services
+      # -----------------------
+      - name: Wait for API and Web
+        run: |
+          npx wait-on http://localhost:3333 http://localhost:3000
+
+      # -----------------------
+      # Run Cypress
+      # -----------------------
+      - name: Run Cypress tests
         uses: cypress-io/github-action@v6
         with:
-          # Starts web server for E2E tests - replace with your own server invocation
-          # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
-          install-command: npm install
-          #wait-on: 'https://petlov.vercel.app' # Waits for above
           browser: chrome
-          group: Chrome
-          # Records to Cypress Cloud 
-          # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
           record: true
-          parallel: true # Runs test in parallel using settings above
+          parallel: true
           spec: ${{ github.event.inputs.spec }}
         env:
-          # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
-          # in GitHub repo → Settings → Secrets → Actions
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # Creating a token https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
