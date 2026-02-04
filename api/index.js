@@ -2,10 +2,13 @@ require("dotenv").config();
 
 const express = require('express')
 const cors = require('cors')
-const prisma = require('./prisma/client')
+let prisma
 
+if (process.env.NODE_ENV !== 'test') {
+  prisma = require('./prisma/client')
+}
 const app = express()
-const port = 3333
+const port = process.env.PORT || 3333
 app.use(cors())
 app.use(express.json())
 
@@ -18,6 +21,9 @@ app.use((err, req, res, next) => {
     next()
 })
 
+app.listen(port, () => {
+  console.log(`🚀 API running on port ${port}`)
+})
 
 app.get('/', (req, res) => {
     res.json({ message: 'API used for the project' })

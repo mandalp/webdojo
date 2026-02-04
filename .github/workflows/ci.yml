@@ -15,6 +15,20 @@ on:
 jobs:
   chrome-tests:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: dba
+          POSTGRES_PASSWORD: dba
+          POSTGRES_DB: UserDB
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U dba"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     container: 
       image: cypress/browsers:22.16.0
       options: --user 1001
@@ -40,7 +54,7 @@ jobs:
       - name: Start API
         working-directory: api
         run: |
-          npm run start:ci &
+          NODE_ENV=test npm run start:ci &
           sleep 10
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
