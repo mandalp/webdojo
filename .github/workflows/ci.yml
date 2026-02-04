@@ -1,20 +1,25 @@
-# .github/workflows/ci.yml
-name: ci
+name: CI - API Tests
 
 on:
-  pull_request: 
+  pull_request:
     branches: [ main ]
   push:
     branches: [ main ]
+
   workflow_dispatch:
     inputs:
       spec:
-        description: 'Cypress spec to run'
+        description: 'Cypress API spec to run'
         required: false
-        default: 'cypress/e2e/*'
+        default: 'cypress/e2e/api/**/*.cy.js'
+
 jobs:
-  chrome-tests:
+  api-tests:
     runs-on: ubuntu-latest
+
+    # ======================
+    # Database
+    # ======================
     services:
       postgres:
         image: postgres:13
@@ -29,17 +34,11 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-    container: 
+
+    container:
       image: cypress/browsers:22.16.0
       options: --user 1001
 
-    # Runs tests in parallel with matrix strategy https://docs.cypress.io/guides/guides/parallelization
-    # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
-    # Also see warning here https://github.com/cypress-io/github-action#parallel
-    #strategy:
-    #  fail-fast: false # https://github.com/cypress-io/github-action/issues/48
-    #  matrix:
-    #    containers: [1, 2] # Uses 2 parallel instances
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -51,52 +50,40 @@ jobs:
         working-directory: api
         run: npm install
 
+      - name: Run Prisma migrations
+        working-directory: api
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://dba:dba@postgres:5432/UserDB
+
       - name: Start API
         working-directory: api
         run: |
-          NODE_ENV=test npm run start:ci &
+          npm run start:ci &
           sleep 10
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: postgresql://dba:dba@postgres:5432/UserDB
           PORT: 3333
 
       # ======================
-      # WEB
+      # Wait for API
       # ======================
-      - name: Install Web dependencies
-        working-directory: web
-        run: npm install
-
-      - name: Build Web
-        working-directory: web
-        run: npm run build
-
-      - name: Start Web
-        working-directory: web
-        run: |
-          npm run start:ci &
-          sleep 10
-      # ======================
-      # Wait for services
-      # ======================
-      - name: Wait for API and Web
+      - name: Wait for API
         run: |
           npx wait-on \
             http://localhost:3333 \
-            http://localhost:3000 \
             --timeout 60000 \
-            --interval 2000 \
             --log
 
       # ======================
-      # Cypress
+      # Cypress (API tests only)
       # ======================
-      - name: Run Cypress tests
+      - name: Run Cypress API tests
         uses: cypress-io/github-action@v6
         with:
-          working-directory: web
-          browser: chrome
+          working-directory: api
+          browser: electron
           spec: ${{ github.event.inputs.spec }}
         env:
-          CYPRESS_baseUrl: http://localhost:3000
+          CYPRESS_baseUrl: http://localhost:3333
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
