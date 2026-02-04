@@ -67,13 +67,15 @@ jobs:
         working-directory: web
         run: npm install
 
+      - name: Build Web
+        working-directory: web
+        run: npm run build
+
       - name: Start Web
         working-directory: web
         run: |
-          echo "Starting Web..."
-          npm run dev &
-          sleep 5
-
+          npm run start:ci &
+          sleep 10
       # ======================
       # Wait for services
       # ======================
